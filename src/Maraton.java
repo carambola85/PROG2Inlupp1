@@ -21,6 +21,8 @@ class Window extends JFrame{
      //Center
      JTextArea text = new JTextArea();
      add(text, BorderLayout.CENTER);
+     JScrollPane scroll = new JScrollPane(text);
+     add(scroll);
      
      //Höger
      
