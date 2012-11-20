@@ -7,7 +7,10 @@ import java.awt.event.*;
 import java.util.*;
 
 class Window extends JFrame{
-    ArrayList<Runner> runners = new ArrayList<Runner>();
+    static ArrayList<Runner> runners = new ArrayList<Runner>();
+    static ArrayList<Integer> numberlist = new ArrayList<Integer>();
+    static int currentSNr = 0;
+    
     JRadioButton startnr, name, age, time;
     JButton bnew, bshow, btime;
     JTextArea text;
@@ -17,30 +20,28 @@ class Window extends JFrame{
      
      setLayout(new BorderLayout());
      
-     //Top
+     // NORTH
      JPanel north = new JPanel();
      JLabel titel = new JLabel("DSV Maraton");
      north.add(titel);
      add(north, BorderLayout.NORTH);
      
-     //Center
+     // CENTER
      text = new JTextArea();
      add(text, BorderLayout.CENTER);
      JScrollPane scroll = new JScrollPane(text);
      add(scroll);
      
-     //Höger
-     
-     
+     // EAST
      JPanel east = new JPanel();
      east.setLayout(new BoxLayout(east, BoxLayout.Y_AXIS));
      JLabel sort = new JLabel("Sortering");
      
-     
+     // RadioButtons
      startnr = new JRadioButton("Startnr");
      name = new JRadioButton("Namn");
      age = new JRadioButton("Ålder");
-     time = new JRadioButton("Tid");
+     time = new JRadioButton("Tid");  
      east.add(sort);
      east.add(startnr);
      east.add(name);
@@ -54,6 +55,7 @@ class Window extends JFrame{
     bg.add(time);
     bg.add(age);
     
+    // SOUTH
     JPanel south = new JPanel();
     bnew = new JButton("Ny");
     bshow = new JButton("Visa");
@@ -61,6 +63,7 @@ class Window extends JFrame{
     
     bnew.addActionListener(new BnewListener());
     bshow.addActionListener(new BshowListener());
+    btime.addActionListener(new BtimeListener());
     south.add(bnew);
     south.add(bshow);
     south.add(btime);
@@ -68,13 +71,20 @@ class Window extends JFrame{
     
     setVisible(true);
     setSize(500,600);
+    setLocation(400,130);
     setDefaultCloseOperation(EXIT_ON_CLOSE);
        }
     
     class NewRunnerForm extends JPanel{
         private JTextField nameField, countryField, ageField;
+        
         public NewRunnerForm(){
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            JPanel rad0 = new JPanel();
+            rad0.add(new JLabel ("Startnummer:"));
+            rad0.add(new JLabel(Integer.toString(numberlist.size() +1 )));
+            add(rad0);
+            
 	    JPanel rad1 = new JPanel();
 	    rad1.add(new JLabel("Namn:"));
 	    nameField = new JTextField(10);
@@ -93,6 +103,9 @@ class Window extends JFrame{
 	    rad3.add(ageField);
 	    add(rad3);
         }
+        
+        
+        
         public String getName(){
             return nameField.getText();
         }
@@ -102,7 +115,30 @@ class Window extends JFrame{
         public int getAge(){
             return Integer.parseInt(ageField.getText());
         }
+        
     } 
+    
+    class NewTimeForm extends JPanel{
+        private JTextField startnr, time;
+        
+        public NewTimeForm() {
+            setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+            JPanel rad1 = new JPanel();
+            JPanel rad2 = new JPanel();
+            JLabel rad1text = new JLabel("Startnummer: ");
+            JLabel rad2text = new JLabel("Tid: ");
+            startnr = new JTextField(10);
+            time = new JTextField(10);
+            
+            rad1.add(rad1text);
+            rad1.add(startnr);
+            rad2.add(rad2text);
+            rad2.add(time);
+            
+            add(rad1);
+            add(rad2);
+    }
+    }
     
             
     class BnewListener implements ActionListener{
@@ -119,8 +155,10 @@ class Window extends JFrame{
                String country = form.getCountry();
                int age = form.getAge();
                if(!name.equals("") && !country.equals("")){
-                    Runner r = new Runner(name, country, age);
+                    currentSNr++;
+                    Runner r = new Runner(name, country, age, currentSNr);
                     runners.add(r);
+                    numberlist.add(currentSNr);
                     return;
                }
                else{
@@ -141,6 +179,14 @@ class Window extends JFrame{
                 
                 text.append(r.getName()+ " " + r.getCountry() + " " + r.getAge() + "\n");
             }
+        }
+    }
+    class BtimeListener implements ActionListener{
+        public void actionPerformed(ActionEvent ave){
+           NewTimeForm form = new NewTimeForm();
+           
+           
+           int svar = showConfirmDialog(Window.this, form);
         }
     }
     public void addRunners(){
