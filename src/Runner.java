@@ -5,6 +5,7 @@ public class Runner {
     private int age;
     private int nr;
     private double time;
+    private boolean hasTime = false;
     
     Runner(String name, String country, int age, int nr){
         this.name = name;
@@ -30,4 +31,11 @@ public class Runner {
         public double getTime(){
             return time;
         }
+        public boolean getHasTime(){
+            return hasTime;
+        }
+        public void setHasTime(boolean b){
+            hasTime = b;
+        }
+        
 }

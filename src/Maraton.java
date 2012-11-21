@@ -97,11 +97,11 @@ class Window extends JFrame{
     
     void addBinary(List<Runner> lista, Runner r, Comparator comp){
         int pos = Collections.binarySearch(lista, r, comp);
-        if (pos == 0)
-            return;
-        else if (pos<0)
+        if (pos<0){
                 pos=-pos-1;
 		lista.add(pos,r);
+                
+        }
     }
     
     
@@ -110,6 +110,7 @@ class Window extends JFrame{
         
         public NewRunnerForm(){
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+           
             JPanel rad0 = new JPanel();
             rad0.add(new JLabel ("Startnummer:"));
             rad0.add(new JLabel(Integer.toString(currentSNr)));
@@ -139,6 +140,8 @@ class Window extends JFrame{
         public String getName(){
             return nameField.getText();
         }
+        
+        
         public String getCountry(){
             return countryField.getText();
         }
@@ -183,7 +186,8 @@ class Window extends JFrame{
            
            while(true){
                try{
-               int svar = showConfirmDialog(Window.this, form);
+               int svar = showConfirmDialog(Window.this, form, "Skapa ny löpare", JOptionPane.YES_NO_CANCEL_OPTION);
+               
                if(svar != OK_OPTION)                   
                     return;
                
@@ -233,19 +237,31 @@ class Window extends JFrame{
            
            while(true){
                try{
-               int svar = showConfirmDialog(Window.this, form);
+               int svar = showConfirmDialog(Window.this, form, "Tid för målgång", JOptionPane.OK_CANCEL_OPTION);
                if(svar != OK_OPTION)                   
                     return;
                
                double rTime = form.getTime();
                int rSNr = form.getSNr();
                
-               for (Runner r : runnersSNr){
-                   if (r.getSNr() == rSNr){
-                       r.setTime(rTime);
-                       addBinary(runnersTime, r, compT);
-                   }
-                   
+               if(rSNr <= runnersSNr.size()){
+                    for (Runner r : runnersSNr){
+                        if (r.getSNr() == rSNr){
+                            r.setTime(rTime);
+                            if (r.getHasTime()){
+                                Collections.sort(runnersTime, compT);
+                                return;
+                            }else{
+                                addBinary(runnersTime, r, compT);
+                                r.setHasTime(true);
+                            }
+                            
+                        }
+                    }
+               
+               }
+               else{
+                   showMessageDialog(Window.this, "Du måste ange ett giltigt startnummer. Antalet registrerade tävlande är " + runnersSNr.size() + ".");
                }
                return;
                }catch(NumberFormatException e){
